@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>AI数据中心上下游产业链深度研究报告 V2.1</title>
+<meta name="description" content="美国AI数据中心供需、Crusoe每MW成本、NVIDIA五层价值栈、电力、冷却、网络和供应链研究。">
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#eaf2fb;background:#071c38}*{box-sizing:border-box}html,body{height:100%;margin:0}body{display:grid;place-items:center;background:radial-gradient(circle at 80% 15%,#164d7d 0,transparent 36%),linear-gradient(145deg,#06172d,#0b2948)}.card{width:min(620px,calc(100% - 36px));padding:34px;border:1px solid rgba(255,255,255,.18);border-radius:24px;background:rgba(255,255,255,.08);box-shadow:0 28px 90px rgba(0,0,0,.34);backdrop-filter:blur(16px)}h1{font-size:clamp(22px,4vw,32px);line-height:1.25;margin:0 0 12px}p{margin:0 0 22px;color:#bed2e8;line-height:1.75}.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.13);overflow:hidden}.bar:after{content:"";display:block;width:38%;height:100%;border-radius:99px;background:linear-gradient(90deg,#00b9dd,#457de4,#916ee7);animation:move 1.15s infinite ease-in-out}@keyframes move{0%{transform:translateX(-110%)}100%{transform:translateX(370%)}}.err{color:#ffd0d0;white-space:pre-wrap}.meta{font-size:12px;color:#8faac5;margin-top:16px}
+</style>
+</head>
+<body>
+<main class="card">
+<h1>正在加载研究报告</h1>
+<p id="status">正在读取并解压完整的离线 HTML 快照…</p>
+<div class="bar" id="bar"></div>
+<div class="meta">AI 数据中心上下游产业链深度研究 · V2.1</div>
+</main>
+<script>
+(async()=>{
+  const names=['payload-01.txt','payload-02.txt','payload-03.txt','payload-04.txt','payload-05.txt','payload-06.txt'];
+  const parts=await Promise.all(names.map(async(name)=>{
+    const response=await fetch('./'+name+'?v=20260830',{cache:'no-store'});
+    if(!response.ok) throw new Error(name+' 加载失败（HTTP '+response.status+'）');
+    return (await response.text()).trim();
+  }));
+  const encoded=parts.join('');
+  if(encoded.length!==52060) throw new Error('报告数据不完整：'+encoded.length+'/52060');
+  if(!('DecompressionStream' in window)) throw new Error('当前浏览器不支持页面解压，请使用最新版 Chrome、Edge 或 Safari。');
+  const binary=atob(encoded);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const report=await new Response(stream).text();
+  if(!report.includes('<!doctype html>')||!report.includes('AI数据中心上下游产业链深度研究报告 V2.1')) throw new Error('报告完整性检查失败');
+  document.open();
+  document.write(report);
+  document.close();
+})().catch(error=>{
+  document.getElementById('bar').style.display='none';
+  const status=document.getElementById('status');
+  status.className='err';
+  status.textContent='报告加载失败：'+(error?.message||String(error))+'\n\n可刷新页面重试。';
+});
+</script>
+</body>
+</html>
